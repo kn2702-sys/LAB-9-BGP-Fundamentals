@@ -1,0 +1,34 @@
+! =====================================================================
+! LAB 9 - BGP Fundamentals
+! Device : R1 - Enterprise internal router
+! AS     : 65001 (Enterprise)
+! Role   : LAN-A gateway (192.168.11.0/24); OSPF area 0 neighbour of R2
+! Links  : Gig0/0 -> SW-A (LAN-A) | Gig0/1 -> R2 | Loopback0 = RID
+! =====================================================================
+enable
+configure terminal
+hostname R1
+no ip domain-lookup
+!
+interface Loopback0
+ description Router ID 1.1.1.1
+ ip address 1.1.1.1 255.255.255.255
+!
+interface GigabitEthernet0/0
+ description LAN-A gateway - to SW-A
+ ip address 192.168.11.1 255.255.255.0
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description To R2 - AS 65001 internal link
+ ip address 10.1.12.1 255.255.255.252
+ no shutdown
+!
+router ospf 1
+ router-id 1.1.1.1
+ network 192.168.11.0 0.0.0.255 area 0
+ network 10.1.12.0 0.0.0.3 area 0
+ network 1.1.1.1 0.0.0.0 area 0
+!
+end
+write memory

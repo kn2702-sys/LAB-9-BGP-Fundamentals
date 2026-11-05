@@ -1,0 +1,40 @@
+! =====================================================================
+! LAB 9 - BGP Fundamentals
+! Device : R3 - Peer border router
+! AS     : 65002 (ISP / Peer)
+! Role   : eBGP peer of R2 (AS 65001); OSPF area 0 to R4
+! Links  : Gig0/0 -> R2 (eBGP transit) | Gig0/1 -> R4 | Loopback0 = RID
+! Note   : The 172.16.100.0/30 transit link is deliberately NOT in
+!          OSPF - it belongs to BGP only.
+! =====================================================================
+enable
+configure terminal
+hostname R3
+no ip domain-lookup
+!
+interface Loopback0
+ description Router ID 3.3.3.3
+ ip address 3.3.3.3 255.255.255.255
+!
+interface GigabitEthernet0/0
+ description To R2 - eBGP transit link (NOT in OSPF)
+ ip address 172.16.100.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description To R4 - AS 65002 internal link
+ ip address 10.2.34.1 255.255.255.252
+ no shutdown
+!
+router ospf 1
+ router-id 3.3.3.3
+ network 10.2.34.0 0.0.0.3 area 0
+ network 3.3.3.3 0.0.0.0 area 0
+!
+router bgp 65002
+ bgp router-id 3.3.3.3
+ neighbor 172.16.100.1 remote-as 65001
+ network 192.168.12.0 mask 255.255.255.0
+!
+end
+write memory

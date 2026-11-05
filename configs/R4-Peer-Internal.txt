@@ -1,0 +1,34 @@
+! =====================================================================
+! LAB 9 - BGP Fundamentals
+! Device : R4 - Peer internal router
+! AS     : 65002 (ISP / Peer)
+! Role   : LAN-B gateway (192.168.12.0/24); OSPF area 0 neighbour of R3
+! Links  : Gig0/0 -> R3 | Gig0/1 -> SW-B (LAN-B) | Loopback0 = RID
+! =====================================================================
+enable
+configure terminal
+hostname R4
+no ip domain-lookup
+!
+interface Loopback0
+ description Router ID 4.4.4.4
+ ip address 4.4.4.4 255.255.255.255
+!
+interface GigabitEthernet0/0
+ description To R3 - AS 65002 internal link
+ ip address 10.2.34.2 255.255.255.252
+ no shutdown
+!
+interface GigabitEthernet0/1
+ description LAN-B gateway - to SW-B
+ ip address 192.168.12.1 255.255.255.0
+ no shutdown
+!
+router ospf 1
+ router-id 4.4.4.4
+ network 10.2.34.0 0.0.0.3 area 0
+ network 192.168.12.0 0.0.0.255 area 0
+ network 4.4.4.4 0.0.0.0 area 0
+!
+end
+write memory

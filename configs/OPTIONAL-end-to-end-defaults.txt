@@ -1,0 +1,28 @@
+! =====================================================================
+! LAB 9 - BGP Fundamentals - OPTIONAL extension
+! Applied to: R1 and R4 only, AFTER the base lab verifies
+!             (docs/VERIFICATION.md steps 1-3).
+!
+! Why this exists: in the base design only the border routers (R2, R3)
+! learn the far LAN, via BGP. The internal routers (R1, R4) run OSPF
+! only and have no route to the far LAN and no default route - so a
+! PC-to-PC ping stops at the internal router. That is realistic: in a
+! real enterprise the internal routers point a default route at their
+! border router (the other standard fix is redistributing BGP into
+! OSPF at the border). Apply the block for your router below, then
+! re-run VERIFICATION step 4.
+! =====================================================================
+!
+! --- On R1 (AS 65001 internal) ---
+enable
+configure terminal
+ip route 0.0.0.0 0.0.0.0 10.1.12.2
+end
+write memory
+!
+! --- On R4 (AS 65002 internal) ---
+enable
+configure terminal
+ip route 0.0.0.0 0.0.0.0 10.2.34.1
+end
+write memory
